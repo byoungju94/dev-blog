@@ -3,7 +3,7 @@
 # To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
 
 layout: home-network
-title: "NETWORK"
-category: network
-navigation_order: "5"
+title: "HIBERNATE"
+category: hibernate
+navigation_order: "4"
 ---
