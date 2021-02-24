@@ -5,5 +5,5 @@
 layout: home-jvm
 title: "JVM"
 category: jvm
-navigation_order: "2"
+navigation_order: 2
 ---

@@ -5,5 +5,5 @@
 layout: home-network
 title: "NETWORK"
 category: network
-navigation_order: "5"
+navigation_order: 4
 ---

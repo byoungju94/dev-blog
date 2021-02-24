@@ -5,5 +5,5 @@
 layout: home-spring
 title: "SPRING"
 category: spring
-navigation_order: "3"
+navigation_order: 3
 ---

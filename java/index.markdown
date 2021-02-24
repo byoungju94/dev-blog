@@ -5,5 +5,5 @@
 layout: home-java
 title: "JAVA"
 category: java
-navigation_order: "1"
+navigation_order: 1
 ---
