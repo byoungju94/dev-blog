@@ -4,8 +4,6 @@ title:  "hibernate"
 date:   2021-02-24 18:52:34 +0900
 category: hibernate
 ---
-# HIBERNATE
-
 ## HIBERNATE?
 - Hibernate is an Object-Relational mapping (ORM) tool used to map java objects(POJO) and database tables.
 - we can use JPA annotations by xml configurations 
@@ -36,3 +34,12 @@ t.commit();
 - javax.persistence.Access: Hibernate can using getter setter method of this entity bean.
 - javax.persistance.Id: you can declare at field. target of field matches primary key of db tables
 - javax.persistance.Column: you can define custom table column name instead variable name. usually automatically using variable name;
+- javax.persistance.GeneratedValue: choose strategy of generating auto primary key.
+- javax.persistsance.OneToOne: relationship between each other two entity beans by one-to-one mapping, there are more relationship such as OneToMany, ManyToOne and ManyToMany
+- org.hibernate.annotations.Cascade: choose cascade stategy between two entity beans. each other different types define in org.hibernate.annotations.CascadeType
+- javax.persistance.PrimaryKeyJoinColumn: define the property for foreign key using org.hibernate.annotations.GenericGenerator, org.hibernate.annotations.Parameter
+
+## 3 types of assosication mappings in hibernate
+- OneToOne
+- ManyToOne
+- ManyToMany
