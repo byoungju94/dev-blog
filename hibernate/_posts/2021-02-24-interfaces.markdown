@@ -43,3 +43,109 @@ t.commit();
 - OneToOne
 - ManyToOne
 - ManyToMany
+
+## OneToOne
+```java
+public class Member {
+    
+    private Long id;
+    private String username;
+    private String password;
+    private String phone;
+
+    @OneToOne(targetEntity = BodyInfo.class)
+    private BodyInfo bodyInfo;
+}
+
+public class BodyInfo {
+    
+    private Long id;
+    private String height;
+    private String weight;
+    private String vision;
+}
+
+```
+
+## ManyToOne
+```java
+public class Member {
+    
+    private Long id;
+    private String username;
+    private String phone;
+    
+    @ManyToOne(cascade = CascadeType.ALL)
+    private School school;
+}
+```
+
+## ManyToMany
+```java
+public class Member {
+    
+    private Long id;
+    private String username;
+    private String phone;
+
+    @ManyToMany(targetEntity = Car.class, cascade = { CascadeType.ALL })
+    @JoinTable(name = "MemberCar",
+                joinColumns = {@JoinColumn(name = "memberId")}),
+                inverseJoinColumns = {@JoinColumn(name = "carId")}
+    private List<Car> carList;
+}
+```
+One Member can own multiple cars, also single car type has multiple owner. many-to-many relationship create new table that includes two primary key of each entity beans. in @JoinTable, the joinColumns property points one entity beans of primary key, and inverseJoinColumn points the other entity beans' primary key.
+
+## setting hibernate configuration by xml format
+```xml
+<?xml version='1.0' encoding='UTF=8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+    "-//Hibernate/Hibernate Configuration DTD 5.3//EN"
+    "http://hibernate.sourceforge.net/hibernate-configuration-5.3.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <property name="hbm2ddl.auto">update</property>
+        <property name="dialect">org.hibernate.dialect.MySQL5Dialect</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/family_db?useSSL=false&characterEncoding=UTF-8&serverTimezone=UTC</property>
+        <property name="connection.username">byoungju94</property>
+        <property name="connection.password">secret1234</property>
+        <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+
+        <mapping resource="member.hbm.xml" />
+    </session-factory>
+</hibernate-configuration>
+```
+- session factory per one database, if there is another datasource, you have to define another session factory.
+- this file name is hibernate.cfg.xml
+- initialize SessionFactory by configurations of specific database.
+
+## hibernate mapping file
+```xml
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 5.3//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-5.3dtd>
+<hibernate-mapping>
+    <class name="me.byoungju94.app.Member" table="tbl_member">
+        <id name="id">
+            <generator class="identity">
+        </id>
+        <property name="username"></property>
+        <property name="lastName"></property>
+    </class>
+</hibernate-mapping>
+```
+- filename should be java_class_name.hbm.xml
+- hibernate-mapping: root element
+- class: define class using entity bean
+- id: using this field for table of primary key
+- generator: there are different ways to create auto primary key.
+
+## flow of task to create hibernate app
+1. create entity beans(pojo)
+2. create mapping files
+3. create configuration file
+4. create or get data from db and mapping with entity bean 
+
+## Difference between openSession and getCurrentSession
