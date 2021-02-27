@@ -149,3 +149,101 @@ One Member can own multiple cars, also single car type has multiple owner. many-
 4. create or get data from db and mapping with entity bean 
 
 ## Difference between openSession and getCurrentSession
+
+## Primary key in Hibernate
+### Natural key
+```java
+@Entity
+public class Member {
+    
+    @Id
+    private String ssn;
+}
+```
+- this key has already made from real world. it is really meaningful key and database just stored in specific column.
+
+### Surrogate key
+```java
+@Entity
+public class Member {
+    
+    @Id
+    private Long id;
+}
+```
+- if you using surrogate key, it just a number, it doesn't have any meaning in Member domain model.
+- database generate new key which is number automatically.
+- domain model, type of different all of exists in world, surrogate key can be consistent.
+- using reference type for surrogate key is better than primitive type.
+- because primitive type has default value zero, not null. so hibernate can be confused that object is really exists.
+
+## Generation Strategies
+if we decide using surrogate key, there is no need to assign primary key manually, we can ask for hibernate to automatically generate those keys. in hibernate, there are four different generation strategies of primary key. it just ask database to automatically generate keys, not generate keys in hibernate. we can using this feature in javax.persistance.GeneratedValue and javax.persistance.GenerationType.
+
+### javax.persistence.GenerationType.IDENTITY
+```java
+@Entity
+public class Member {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+}
+```
+- it supported database like mysql, sql server and etc.
+- in mysql, when using AUTO_INCREMENT option at column in tables, this column effect unique only it's table.
+- tables has own primary key each other, not using primary key globally or shared.
+
+### javax.persistence.GenerationType.SEQUENCE
+```java
+@Entity
+public class Member {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
+}
+```
+- this startegy does not support all kinds of database. it supports oracle, h2sql.
+- multiple tables in one database, they shared primary key.
+- there is some benefits using sequence instead identity. if there is a situation that merge two different table consists of identity primary key, it will be conflict and hard to merge thoes tables, but consist of sequence primary key, it is easy to merge tables.  
+<br />
+    ```java
+    Member member = new Member("byoungju94", "password1");
+    Location location = new Location("seoul", "gangdongju");
+    em.persist(member);
+    em.persist(location):
+    ```
+- when using identity primary key, it is slower than sequence type, insert row performance.
+- identity primary key ask to member table what is the last primary key, and ask to location table twice.
+- but sequence primary key can ask only global sequence table. so it can faster insert performance than identity primary key.
+
+
+## Using JPA.i.e Hibernate EntityManager instead Hibernate's property API
+```xml
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.2"
+            xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
+    <persistence-unit name="edu.mum.cs">
+        <description>
+            Persistence unit for Hibernate
+        </description>
+
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <properties>
+            <property name="packagesToScan" value="edu.mum.cs.domain"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/hibernate01?useSSL=false"/>
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="javax.persistence.jdbc.user" value="root"/>
+            <property name="javax.persistence.jdbc.password" value="1234"/>
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/>
+            <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheRegionFactoryAvailableException"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+        </properties>
+
+    </persistence-unit>
+</persistence>
+```
