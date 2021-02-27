@@ -149,3 +149,32 @@ One Member can own multiple cars, also single car type has multiple owner. many-
 4. create or get data from db and mapping with entity bean 
 
 ## Difference between openSession and getCurrentSession
+
+## Using JPA.i.e Hibernate EntityManager instead Hibernate's property API
+```xml
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.2"
+            xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
+    <persistence-unit name="edu.mum.cs">
+        <description>
+            Persistence unit for Hibernate
+        </description>
+
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+
+        <properties>
+            <property name="packagesToScan" value="edu.mum.cs.domain"/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/hibernate01?useSSL=false"/>
+            <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
+            <property name="javax.persistence.jdbc.user" value="root"/>
+            <property name="javax.persistence.jdbc.password" value="1234"/>
+            <property name="javax.persistence.schema-generation.database.action" value="drop-and-create"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/>
+            <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheRegionFactoryAvailableException"/>
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+        </properties>
+
+    </persistence-unit>
+</persistence>
+```
