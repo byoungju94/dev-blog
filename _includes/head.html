@@ -5,8 +5,14 @@
   {%- seo -%}
   <link rel="stylesheet" href="{{ "/assets/main.css" | relative_url }}">
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@1.0/nanumsquare.css">
+  <link href="http://fonts.cdnfonts.com/css/cascadia-code" rel="stylesheet">
   {%- feed_meta -%}
   {%- if jekyll.environment == 'production' and site.google_analytics -%}
     {%- include google-analytics.html -%}
   {%- endif -%}
+  <style>
+    .highlight {
+      font-family: 'Cascadia Code', sans-serif;
+    }
+  </style>
 </head>
