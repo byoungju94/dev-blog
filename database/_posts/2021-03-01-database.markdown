@@ -4,4 +4,26 @@ title:  "database"
 date:   2021-03-01 19:56:37 +0900
 category: database
 ---
-### Database
+## 0. INDEX
+- index is very important for database performance. database has many different kinds of index strategy.
+- when we request to database for get some data, if database scanning whole data in storage, it is very inefficient.
+- so database, more efficient to scanning data, it stored data key-value structure which the value of columns key and address is being value.
+- and also sort by specific condition that we customized
+
+### 0.1. SortedList & ArrayList
+- there are similar paradigm in programming language, such as SortedList or ArrayList
+- SortedList always sort data by specific condition, when the new object comes and sort before insert.
+- By the way, ArrayList stored data only incomming order.
+- it stored data before sort in specific condition, so it is slower when store data, but we can get data faster because database should not scan the whole data.
+- the table which has many index column, it's INSERT, UPDATE, DELETE query performance will slow. but SELECT is fast.
+- we should consider adding another index column by how much lose insert performance and how much faster read performance.
+- setting every column as index which are using where clause, it will be bad influence to insert performance.
+- there are two kinds of index which are Primary key and Secondary key.
+    - primary key is representative for single record. it is certainly a unique column in tables. primary keys are not allowed NULL, and duplication.
+    - except primary key, all index column called by Secandary key. sometime it can replaced primary key.
+
+### 0.2. Type of Store data
+- there are B-Tree, Hash and Fractal_Tree index
+- B-Tree Index: it used generally. it indexed data without transform original data.
+- Hash Index: it using hash value of column's data, so it can be very fast to search. but it transform original data to hash, you cannot search only prefix or suffix match condition. it mainly used in in-memory database.
+- Fractal-Tree Index: 
