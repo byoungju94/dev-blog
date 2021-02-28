@@ -132,7 +132,7 @@ One Member can own multiple cars, also single car type has multiple owner. many-
             <generator class="identity">
         </id>
         <property name="username"></property>
-        <property name="lastName"></property>
+        <property name="password"></property>
     </class>
 </hibernate-mapping>
 ```
@@ -143,12 +143,101 @@ One Member can own multiple cars, also single car type has multiple owner. many-
 - generator: there are different ways to create auto primary key.
 
 ## flow of task to create hibernate app
-1. create entity beans(pojo)
+1. create pojo object for mapping table
 2. create mapping files
 3. create configuration file
-4. create or get data from db and mapping with entity bean 
+4. storing the data to pojo retrieving from database.
 
 ## Difference between openSession and getCurrentSession
+- getCurretionSession() method returns the session bound to the context.
+- Since this session object belongs to the context of Hibernate, it is okay if you don't close it.
+- Once the sessionFactory is closed, this session object gets closed.
+- openSession() method helps in opening a new session
+- You should close this session object once you are done with all the database operations. And also, you should open a new session for each request in a multi-threaded enviromnet.
+
+## Difference between Session get() and load() method
+- get() loads the data as soon as it's called whereas load() returns a proxy object and loads data only when it's actually required, so load() is better because it support lazy loading.
+- Since load() throws exception when data is not found, we should use it only when we know data exist.
+- we should use get() when we want to make sure data exists in the database
+
+## hibernate caching - Types
+- there are three types of caching in hibernate. First Level Cache, Second level Cache, Query Cache.
+
+## hibernate caching - first level cache
+- hibernate caches query data to make our application faster and improves performance.
+- Hibernate first level cache is associated with the Session Object.
+- Hibernate first level cache is enabled by default and there is no way to disable it.
+- Still hibernate provides methods through which we can delete selected objects from the cache or clear the cache completely.     
+- any object cached in a session will not be visible to other sessions and when the session is closed, all the cached objects will also be lost.
+
+## hibernate caching - second level cache
+- Hibernate Second Level cache is disabled by default but we can enabled it through configuration
+- Currently EHCache and Infinispan provides implementation for Hibernate Second level cache and we can use them.
+
+## configure Hibernate Second Level Cache
+- add hibernate-ehcache dependency in your maven project
+```xml
+<dependency>
+    <groupId>org.hibernate</groupId>
+    <artifactId>hibernate-ehcache</artifactId>
+</dependency>
+```
+- add below properties in hibernate configuration file.
+```xml
+<property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
+<property name="hibernate.cache.use_second_level_cache">true</property>
+<property name="hibernate.cache.use_query_cache">true</property>
+<property name="net.sf.ehcache.configurationResourceName">/doublejehcache.xml</property>
+```
+- create EHCahce configuration file.
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="ehcache.xsd" updateCheck="true"
+    monitoring="autodetect" dynamicConfig="true">
+
+    <diskStore path="java.io.tmpdir/ehcache" />
+
+    <defaultCache maxEntriesLocalHeap="10000" eternal="false" timeToIdleSecondes="120" timeToLiveSeconds="120"
+        diskSpoolBufferSizeMB="30" maxEntriesLocalDisk="10000000" diskExpiryThreadIntervalSeconds="120"
+        memoryStoreEvictionPolicy="LRU" statistics="true">
+        <persistence strategy="local_TempSwap" />
+    </defaultCache>
+
+    <cache name="member" maxEntriesLocalHeap="10000" eternal="false" timeToIdleSeconds="5" timeToLiveSeconds="10">
+        <persistence strategy="localTempSwap" />
+    </cache>
+
+    <cache name="org.hibernate.cache.internal.StandardQueryCache" maxEntriesLocalHeap="5" eternal="false" timeToLiveSeconds="120">
+        <persistence strategy="localTempSwap" />
+    </cache>
+
+    <cache name="org.hibernate.cache.spi.UpdateTimestampsCache" maxEntriesLocalHeap="5000" eternal="true">
+        <persistence strategy="localTempSwap" />
+    </cache>
+
+</ehcache>
+```
+- diskStore means, if my cache overflows, cache will store to path location.
+- default cache means, the caches which has no specific region, will follow defaultCache configuration.
+- you can customize caching strategy for some different cache object.
+- we can also cached org.hibernate.cache.internal.StandardQueryCache and org.hibernate.cache.spi.UpdateTimestampsCache
+
+<br />
+- Annotate entity beans with @Cache annotation and choose strategy.
+
+```java
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrenctStrategy;
+
+@Entity
+@Table(name = "tbl_member")
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY, region="member")
+public class Member {
+    
+}
+```
+
 
 ## Primary key in Hibernate
 ### Natural key
