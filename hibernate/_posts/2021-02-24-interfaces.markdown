@@ -98,6 +98,7 @@ public class Member {
 One Member can own multiple cars, also single car type has multiple owner. many-to-many relationship create new table that includes two primary key of each entity beans. in @JoinTable, the joinColumns property points one entity beans of primary key, and inverseJoinColumn points the other entity beans' primary key.
 
 ## setting hibernate configuration by xml format
+
 ```xml
 <?xml version='1.0' encoding='UTF=8'?>
 <!DOCTYPE hibernate-configuration PUBLIC
@@ -121,6 +122,7 @@ One Member can own multiple cars, also single car type has multiple owner. many-
 - initialize SessionFactory by configurations of specific database.
 
 ## hibernate mapping file
+
 ```xml
 <?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE hibernate-mapping PUBLIC 
@@ -136,6 +138,7 @@ One Member can own multiple cars, also single car type has multiple owner. many-
     </class>
 </hibernate-mapping>
 ```
+
 - filename should be java_class_name.hbm.xml
 - hibernate-mapping: root element
 - class: define class using entity bean
@@ -176,20 +179,25 @@ One Member can own multiple cars, also single car type has multiple owner. many-
 
 ## configure Hibernate Second Level Cache
 - add hibernate-ehcache dependency in your maven project
+
 ```xml
 <dependency>
     <groupId>org.hibernate</groupId>
     <artifactId>hibernate-ehcache</artifactId>
 </dependency>
 ```
+
 - add below properties in hibernate configuration file.
+
 ```xml
 <property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
 <property name="hibernate.cache.use_second_level_cache">true</property>
 <property name="hibernate.cache.use_query_cache">true</property>
 <property name="net.sf.ehcache.configurationResourceName">/doublejehcache.xml</property>
 ```
+
 - create EHCahce configuration file.
+
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <ehcache xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
@@ -218,6 +226,7 @@ One Member can own multiple cars, also single car type has multiple owner. many-
 
 </ehcache>
 ```
+
 - diskStore means, if my cache overflows, cache will store to path location.
 - default cache means, the caches which has no specific region, will follow defaultCache configuration.
 - you can customize caching strategy for some different cache object.
@@ -237,7 +246,6 @@ public class Member {
     
 }
 ```
-
 
 ## Primary key in Hibernate
 ### Natural key
