@@ -4,7 +4,7 @@ title:  "IOC & DI"
 date:   2021-03-02 19:56:37 +0900
 category: spring
 ---
-## IOC
+# IOC
 - it means inversion of control
 - IOC is not equal to dependency injection
 - the control flow of the program is inverted
