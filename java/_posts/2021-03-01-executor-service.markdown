@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "ExecutorService"
-date:   2021-02-19 00:01:02 +0900
+date:   2021-03-01 00:01:02 +0900
 category: java
 ---
 ## thread pool management

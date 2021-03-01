@@ -1,0 +1,33 @@
+---
+layout: post
+title:  "IOC & DI"
+date:   2021-03-02 19:56:37 +0900
+category: spring
+---
+## IOC
+- it means inversion of control
+- IOC is not equal to dependency injection
+- the control flow of the program is inverted
+- we as programmer don't control flow of application
+- instread external resource like framework or container, component, service control the flow of application
+
+### Tomcat Container
+- we assume that there are two servlet in tomcat container, and also filter and servlet.
+- when request come, request will be handled by tomcat conatiner using doGet() method.
+- we as programmer cannot instantiate servlet, filter, listener. and also cannot handle servlet's lifecycle
+- and there is no way to call doGet(), doPost()
+- the entire flow of this scenario when user makes a request is not controlled by programmer, is controlled by tomcat container
+- in this case, you can think as tomcat container as an IOC Container, inversion of control
+
+### Event
+- event handler can also be inversion of control.
+- when we hook method on incomming new request, that method not called by programmer, called by other external source
+
+### Implemented By
+- event
+- Tomcat container
+- Template Design Pattern
+    - the flow is defined in the parent classs, but acutal implementation is in the sub class
+- Service Locator pattern
+- Dependency Injection
+    - which is actually the things inside spring core
