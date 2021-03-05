@@ -470,8 +470,56 @@ public @interface Column {
 - precision: we can store type of decimal data which numbers after dots.
 - scale: using the scale property for exact numeric columns.
 
+<br />
 
 ### @Temporal
+in database, there are many kinds of different type for store time data like DATETIME, TIME(), TIMESTAMP()
+
+<br />
+
+before java 7, we using java.util.Date or java.util.Calander for time data. if we store current time info in database table, we should get current time using java.util.Date, and java.util.Date returns like '2021-03-03' and it store to databse changed to '2021-03-03 00:00:00'. it stored as timestamp in the database. because date type represented date and time. but in some cases, if you don't want to store the time, not date, you can use @temporal
+
+<br />
+
+```java
+@Entity
+@Table
+public class Account {
+    
+    @Id
+    private Long id;
+    private String username;
+
+    // before java 7
+    @Temporal(TemporalType.DATE)
+    private java.util.Date birthDate;
+
+    // after java 8
+    // mysql date type
+    private LocalDate birthDate;
+
+    // after java 8
+    // mysql time type
+    private LocalDateTime birthDate2;
+}
+EntityManagerFactory factory = Persistence.createEntityManagerFactory("me.byoungju94");
+EntityManager em = factory.createEntityManager();
+EntityTranscation transcation = em.getTransaction();
+
+transaction.begin();
+
+Account account = new Account(id, username, new Date(), LocalDate.of(2021, 03, 04));
+em.persist(account);
+
+transcation.commit();
+em.close()
+```
+
+using TemporalType.DATE annotation, birthDate will store like 2021-03-04 without hour, minute, second.
+since java 7, java add new apis for the date. java recommends don't using java.util.Date because it's not immutable, instead using java.time.LocalDate. LocalDate automatically map to the date type in database column.
+also LocalDateTime will map to time data type in database column.
+
+
 
 
 
