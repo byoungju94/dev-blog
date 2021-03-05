@@ -502,6 +502,9 @@ public class Account {
     // mysql time type
     private LocalDateTime birthDate2;
 }
+```
+
+```java
 EntityManagerFactory factory = Persistence.createEntityManagerFactory("me.byoungju94");
 EntityManager em = factory.createEntityManager();
 EntityTranscation transcation = em.getTransaction();
@@ -539,6 +542,7 @@ public class Account {
     private int tempCodeAuthorization;
 }
 ```
+
 hibernate will ignore field that has @transient annotation.
 
 
