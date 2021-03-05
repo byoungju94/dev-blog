@@ -545,12 +545,70 @@ public class Account {
 
 hibernate will ignore field that has @transient annotation.
 
+### @Access
+hibernate provides two different access way.
 
+#### Field Access
 
+```java
+@Entity
+@Table
+public class Account {
 
+    @Id
+    private Long id;
 
+    @Column
+    private String username;
 
+    @Access(AccessType.PROPERTY)
+    private String password;
+}
+```
 
+all other hibernate annotation must be applied on the field. this is called field access. at runtime, if we populate or set values into target fields, it's gonna using reflection api, even though class has getters and setters, hibernate cannot use those method, using reflection api. we can think using reflection api can be broke encapsulation. if you don't want access specific fields by hibernate using reflection api, you can use @Access annotation to block access, only allow access to field using getter and setters methods.
+
+#### Property Access
+
+```java
+@Entity
+@Table
+public class Account {
+
+    private Long id;
+    private String username; 
+    private String password;
+
+    @Id
+    public Long getId() {
+        return this.id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getUsername() {
+        return this.username;
+    }
+
+    public String setUsername(String username) {
+        this.username = username;
+    }
+
+    @Access(AccessType.FIELD)
+    public String getPassword() {
+        return this.password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+}
+```
+
+if you add @Id annotation on the getter method of fields which using primary key, hibernate using getter setter to set value or retrieve value instead of not using reflection api. and rest of all field which has annotation, must give getter method. and if you switch specific column to access using field access, you can use AccessType.FIELD annotation on getter method which you want to access to field in type of access property class.
 
 
 
