@@ -519,6 +519,29 @@ using TemporalType.DATE annotation, birthDate will store like 2021-03-04 without
 since java 7, java add new apis for the date. java recommends don't using java.util.Date because it's not immutable, instead using java.time.LocalDate. LocalDate automatically map to the date type in database column.
 also LocalDateTime will map to time data type in database column.
 
+<br />
+
+### @Transient
+sometimes, we don't want all the property of instance fields in an entity to map to a column into a table. Then you can using this @Transient keyword to instance field only you want.
+
+```java
+@Entity
+@Table
+public class Account {
+
+    @Id
+    private Long id;
+
+    private String username;
+    private String password;
+
+    @Transient
+    private int tempCodeAuthorization;
+}
+```
+hibernate will ignore field that has @transient annotation.
+
+
 
 
 
