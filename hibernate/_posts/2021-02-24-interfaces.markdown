@@ -604,13 +604,25 @@ public class Account {
     public void setPassword(String password) {
         this.password = password;
     }
-
 }
 ```
 
 if you add @Id annotation on the getter method of fields which using primary key, hibernate using getter setter to set value or retrieve value instead of not using reflection api. and rest of all field which has annotation, must give getter method. and if you switch specific column to access using field access, you can use AccessType.FIELD annotation on getter method which you want to access to field in type of access property class.
 
+<br />
 
+### Entity Life Cycle
+if you using jpa apis, and you probably facing the issue like a detached object can not be served. those problem happen is because of the different state of the entities. 
+
+first we make an instance of Account.java
+
+```java
+Account account = new Account();
+```
+
+- transient: when account class generated as a new instance, it immediately goes to the transient state. still there is no record abount account instance. also this instance is outside of persistence context.
+- managed/persisted: EntityManager has api to move entity status from transient to managed/persisted. using `em.persist(account);` after call this method, account instance will move to persistence context. and we execute method `em.commit();` account instance will store into the database as a record of table. this state called many different word like this instance is located at persistence context or inside in first-level cache or called session or called IOC Container of Hibernate.
+- Detached: `em.detach();` or `em.close();`
 
 
 
