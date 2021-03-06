@@ -1,0 +1,83 @@
+---
+layout: post
+title:  "Netty"
+date:   2021-02-19 23:00:00 +0900
+category: network
+---
+# NETTY
+
+## 1.1 네트워킹 프로그래밍
+초창기 네트워크 프로그래밍은 운영체제 별로 서로 다르게 코딩해야 했고 C언어가 가지고 있는 복잡한 소켓 라이브러리를 이용해야 했다.
+이러한 복잡한 환경 속에서 클라이언트 / 서버 프로토콜을 제작하려면 많은 양의 보일러플레이트 코드를 작성해야 했다.  
+
+java.net api는 각기 다른 운영체제가 제공하는 네이티브 시스템 소켓 라이브러리를 추상화해서 탄생했고, 블로킹 함수로 만들어졌다.
+아래 코드는 java.net api를 사용한 간단한 서버측 코드이다.
+
+```java
+package me.byoungju94;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+
+public class App {
+
+    public static void main(String[] args) throws Exception {
+        try (
+            var serverSocket = new ServerSocket(7070);
+            var clientSocket = serverSocket.accept();
+            var inputStream = new InputStreamReader(clientSocket.getInputStream());
+        ) {
+            var readerIn = new BufferedReader(inputStream);
+            var senderOut = new PrintWriter(clientSocket.getOutputStream(), true);
+
+            String requestData;
+            String responseData;
+
+            while ((requestData = readerIn.readLine()) != null) {
+                if (requestData.equals("END")) {
+                    break;
+                }
+
+                responseData = processIncommingData(requestData);
+                senderOut.println(responseData);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static String processIncommingData(String requestData) {
+        var stringBuilder = new StringBuilder();
+        stringBuilder.append("process done: ");
+        stringBuilder.append(requestData);
+        return stringBuilder.toString();
+    }
+}
+```
+- accept()는 새로운 요청이 ServerSocket에 연결되기 까지 모든 진행을 블로킹하며 연결 된 후 서버 간 통신을 위한 Socket 객체를 반환한다. 이후 들어오는 연결을 계속해서 ServerSocket이 수신대기한다.
+- Socket의 입출력 스트림(getInputStream(), outputStream())은 각각 들어오는 스트림을 텍스트 형태로 읽고, 포매팅된 표현을 텍스트 출력 스트림으로 출력한다.
+- readLine()은 줄바꿈이나 캐리지 리턴으로 끝나는 문자열을 읽을 때 까지 진행을 블로킹한다.
+
+<br />
+
+위의 코드는 동시에 하나의 요청만 받을 수 있고 처리할 수 있다. 다수의 요청을 한꺼번에 받을 수 있으러면 항상 수신대기 하고 있는 ServerSocket에 클라이언트가 요청을 보내면 새로운 Thread를 할당해서 Socket을 처리할 수 있어야 한다. 하지만 이 방식에는 많은 문제가 있다. 만들어진 많은 Thread는 ServerSocket에 새로운 요청이 오기 전까지 계속해서 대기상태로 있어야 하고 이것은 리소스 낭비로 이어지게 된다. 운영체제에 따라 다르지만 스택의 기본 크기는 64KB에서 1MB까지 할당된다.
+
+<br />
+
+JVM은 물리적으로 아주 많은 수의 스레드를 지원할 수 있지만, 동시 접속이 한계에 이르기 전부터 컨텍스트 전환에 따른 오버헤드가 발생할 수 있다.
+
+<br />
+
+
+### 1.1.1 자바 NIO
+운영체제 별로 네이티브 소켓 라이브러리에는 오래전부터 네트워크 리소스를 효율적으로 사용할 수 있는 논블로킹 함수가 존재하고 있었다.  
+- setsockopt()를 이용하면 요청에 따른 처리 작업 진행 여부에 상관없이 바로 응답할 수 있도록 제어할 수 있다.
+- 시스템의 이벤트 통지 API를 이용해 논블로킹 소켓들을 등록하게 되면 응답 후에 처리 작업 진행 여부를 통지받을 수 있다.
+- 논블로킹 입출력을 가능하게 하기 위해 2002년 JDK 1.4의 java.nio가 도입되었다.
+
+<br />
+
+- java.nio.channels.Selector 클래스는 자바의 논블로킹 입출력 구현의 핵심으로써
+
