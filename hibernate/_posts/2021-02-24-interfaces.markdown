@@ -621,9 +621,11 @@ Account account = new Account();
 ```
 
 - transient: when account class generated as a new instance, it immediately goes to the transient state. still there is no record abount account instance. also this instance is outside of persistence context.
-- managed/persisted: EntityManager has api to move entity status from transient to managed/persisted. using `em.persist(account);` after call this method, account instance will move to persistence context. and we execute method `em.commit();` account instance will store into the database as a record of table. this state called many different word like this instance is located at persistence context or inside in first-level cache or called session or called IOC Container of Hibernate.
-- Detached: `em.detach();` or `em.close();`
-
+- managed/persisted: EntityManager has api to move entity status from transient to managed/persisted. using `em.persist(account);` after call this method, account instance will move to persistence context. and we execute method `em.commit();` account instance will store into the database as a record of table. this state called many different word like this instance is located at persistence context or inside in first-level cache or called session or called IOC Container of Hibernate.  
+if you using `em.find(pk)`, it will automatically become managed/persisted context.
+- Detached: detached status means the instance of entity was in persistence context, but now this entity is outside of persistence context. changing entity status using `em.detach();` this status is same as transient status that entity located outside of persistence context. but there is difference. transient mostly does not have primary key. but detached entity has primary key.  
+if we want to back this entity to managed/persisted state, using `em.merge()`. but there is little bit different. when we using `em.merge()`, it didn't directly push into persistence context, instead it create another object and copy of entity value and put inside of created one.
+- Removed: you can transfer state from managed/persisted to removed using `em.remove(account)`. entity will removed from persistence context and record of table in database.
 
 
 
